@@ -1,4 +1,5 @@
 (ns cljs.core.async.macros
+  (:require-macros [cljs.core.async.impl.ioc-macros-m :refer [aset-all!]])
   (:require [cljs.core.async.impl.ioc-macros :as ioc]))
 
 (defmacro go
@@ -17,7 +18,7 @@
       (fn []
         (let [f# ~(ioc/state-machine body 1 &env ioc/async-custom-terminators)
               state# (-> (f#)
-                         (ioc/aset-all! cljs.core.async.impl.ioc-helpers/USER-START-IDX c#))]
+                         (aset-all! cljs.core.async.impl.ioc-helpers/USER-START-IDX c#))]
           (cljs.core.async.impl.ioc-helpers/run-state-machine-wrapped state#))))
      c#))
 

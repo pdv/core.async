@@ -6,7 +6,7 @@
               [cljs.core.async.impl.timers :as timers]
               [cljs.core.async.impl.dispatch :as dispatch]
               [cljs.core.async.impl.ioc-helpers :as helpers])
-    (:require-macros [cljs.core.async.impl.ioc-macros :as ioc]
+    (:require-macros [cljs.core.async.impl.ioc-macros-m :refer [aset-all!]]
                      [cljs.core.async.macros :refer [go go-loop]]))
 
 (defn- fn-handler
@@ -473,14 +473,14 @@
   (solo-mode* [m mode]))
 
 (defn ioc-alts! [state cont-block ports & {:as opts}]
-  (ioc/aset-all! state helpers/STATE-IDX cont-block)
+  (aset-all! state helpers/STATE-IDX cont-block)
   (when-let [cb (cljs.core.async/do-alts
                   (fn [val]
-                    (ioc/aset-all! state helpers/VALUE-IDX val)
+                    (aset-all! state helpers/VALUE-IDX val)
                     (helpers/run-state-machine-wrapped state))
                   ports
                   opts)]
-    (ioc/aset-all! state helpers/VALUE-IDX @cb)
+    (aset-all! state helpers/VALUE-IDX @cb)
     :recur))
 
 (defn mix

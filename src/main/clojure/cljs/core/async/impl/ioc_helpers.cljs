@@ -1,6 +1,7 @@
 (ns cljs.core.async.impl.ioc-helpers
-  (:require [cljs.core.async.impl.protocols :as impl])
-  (:require-macros [cljs.core.async.impl.ioc-macros :as ioc]))
+  (:require-macros [cljs.core.async.impl.ioc-macros-m :refer [aset-all!]])
+  (:require [cljs.core.async.impl.protocols :as impl]
+            [cljs.core.async.impl.ioc-macros :as ioc]))
 
 (def ^:const FN-IDX 0)
 (def ^:const STATE-IDX 1)
@@ -44,17 +45,17 @@
 (defn take! [state blk ^not-native c]
   (if-let [cb (impl/take! c (fn-handler
                                    (fn [x]
-                                     (ioc/aset-all! state VALUE-IDX x STATE-IDX blk)
+                                     (aset-all! state VALUE-IDX x STATE-IDX blk)
                                      (run-state-machine-wrapped state))))]
-    (do (ioc/aset-all! state VALUE-IDX @cb STATE-IDX blk)
+    (do (aset-all! state VALUE-IDX @cb STATE-IDX blk)
         :recur)
     nil))
 
 (defn put! [state blk ^not-native c val]
   (if-let [cb (impl/put! c val (fn-handler (fn [ret-val]
-                                             (ioc/aset-all! state VALUE-IDX ret-val STATE-IDX blk)
+                                             (aset-all! state VALUE-IDX ret-val STATE-IDX blk)
                                              (run-state-machine-wrapped state))))]
-    (do (ioc/aset-all! state VALUE-IDX @cb STATE-IDX blk)
+    (do (aset-all! state VALUE-IDX @cb STATE-IDX blk)
         :recur)
     nil))
 
